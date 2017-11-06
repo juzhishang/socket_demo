@@ -21,7 +21,25 @@ io.sockets.on('connection', function(socket) {
         // 自己
         socket.emit('serverMessage', 'You said: ' + content)
         // 发给其他用户(这个方法会排除发射方自身)
-        socket.broadcast.emit('serverMessage', socket.id + ' said: ' + content)
+        socket.broadcast.emit('serverMessage', socket.username + ' said: ' + content)
+    })
+
+    // 客户端发射login事件，服务端获取到用户名，然后广播用户登录
+    socket.on('login', function(username) {
+        socket.username = username
+        // 设置用户名
+        socket.emit('serverMessage', 'Now logged in as ' + username)
+        socket.broadcast.emit('serverMessage', 'User ' + username + ' logged in')
+    })
+    // 给客户端发射login事件，这样客户端就会提示用户输入登录名
+    socket.emit('login')
+
+    socket.on('disconnecting', function() {
+        // 获取用户名
+        var username = socket.username || socket.id
+        socket.broadcast.emit('serverMessage', 'User ' + username + ' disconnected')
     })
 })
+
+
 

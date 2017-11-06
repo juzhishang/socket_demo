@@ -35,6 +35,11 @@
         socket.on('serverMessage', function(content) {
             addMessage(content)
         })
+        // 获取用户名
+        socket.on('login', function() {
+            var username = prompt('what username would you like to use ?')
+            socket.emit('login', username)
+        })
 
         var inputEle = document.getElementById('input')
         inputEle.onkeydown = function(event) {
