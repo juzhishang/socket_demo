@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <style type="text/css">
+      #input {
+         width: 200px; 
+      }
+      #messages {
+         border: 1px solid #b1b1b1;
+      }
+    </style>
+</head>
+<body>
+    <input type="text" id="input">
+    <div id="messages"></div>
+    <script>
+        var messagesEle = document.getElementById('messages')
+        var lastMessageEle = null
+
+        function addMessage(message) {
+            var newMessageEle = document.createElement('div')
+            var newMessageText = document.createTextNode(message)
+            newMessageEle.appendChild(newMessageText)
+            // 总是作为第一个子元素插入
+            messagesEle.insertBefore(newMessageEle, lastMessageEle)
+            lastMessageEle = newMessageEle
+        }
+
+        var socket = io.connect('http://localhost:4000')
+        socket.on('serverMessage', function(content) {
+            addMessage(content)
+        })
+
+        var inputEle = document.getElementById('input')
+        inputEle.onkeydown = function(event) {
+            if (event.keyCode === 13) {
+                // 发射消息给服务端
+                socket.emit('clientMessage', inputEle.value)
+                input.value = ''
+                return false
+            } else {
+                return true
+            }
+        }
+        
+    </script>
+</body>
+</html>
