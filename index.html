@@ -37,19 +37,37 @@
         })
         // 获取用户名
         socket.on('login', function() {
+            console.log(666)
             var username = prompt('what username would you like to use ?')
             socket.emit('login', username)
         })
-
+        console.log(555)
         var inputEle = document.getElementById('input')
         inputEle.onkeydown = function(event) {
             if (event.keyCode === 13) {
                 // 发射消息给服务端
-                socket.emit('clientMessage', inputEle.value)
+                sendMessage(inputEle.value)
                 input.value = ''
                 return false
             } else {
                 return true
+            }
+        }
+
+        function sendMessage(message) {
+            var cmdMatch = message.match(/^\/(\w*)(.*)/)
+            if (cmdMatch) {
+                sendCmd(cmdMatch[1], cmdMatch[2].trim())
+            } else {
+                socket.emit('clientMessage', message)
+            }
+        }
+
+        function sendCmd(command, args) {
+            if (command === 'j') {
+                socket.emit('join', args)
+            } else {
+                alert('unknown command: ' + command)
             }
         }
         
