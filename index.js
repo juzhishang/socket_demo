@@ -2,6 +2,8 @@ var httpd = require('http').createServer(handler)
 var io = require('socket.io').listen(httpd)
 var fs = require('fs')
 var path = require('path')
+// 设置命名空间
+var chat = io.of('/chat')
 
 httpd.listen(4000)
 
@@ -16,7 +18,7 @@ function handler(req, res) {
     })
 }
 
-io.sockets.on('connection', function(socket) {
+chat.on('connection', function(socket) {
     socket.on('clientMessage', function(content) {
         // 自己
         var room = socket.room || ''
